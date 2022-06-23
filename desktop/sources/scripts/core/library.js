@@ -513,6 +513,25 @@ library['#'] = function OperatorComment (orca, x, y, passive) {
 
 // IO
 
+library['@'] = function OperatorAt (orca, x, y, passive) {
+	Operator.call(this, orca, x, y, '@', true)
+
+	this.name = 'at'
+	this.info = 'TODO'
+	this.ports.marker = { x: 1, y: 0 }
+
+	this.run = function (force = false) {
+		const marker = this.listen(this.ports.marker)
+		if(marker !== '.') {
+			if(!orca.markers[marker]) {
+				orca.markers[marker] = []
+			}
+
+			orca.markers[marker].push({ x: this.x + 1, y: this.y + 1 })
+		}
+	}
+}
+	
 library.$ = function OperatorSelf (orca, x, y, passive) {
   Operator.call(this, orca, x, y, '*', true)
 

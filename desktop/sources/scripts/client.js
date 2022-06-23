@@ -149,7 +149,7 @@ function Client () {
     this.source.new()
     this.history.reset()
     this.cursor.reset()
-    this.clock.play()
+    //this.clock.play()
   }
 
   this.run = () => {

@@ -15,8 +15,8 @@ function Clock (client) {
   this.start = function () {
     const memory = parseInt(window.localStorage.getItem('bpm'))
     const target = memory >= 60 ? memory : 120
-    this.setSpeed(target, target, true)
-    this.play()
+    this.setSpeed(target, target, false)
+    //this.play()
   }
 
   this.touch = function () {
@@ -103,10 +103,10 @@ function Clock (client) {
       console.log('Clock', 'Puppeteering starts..')
       this.isPuppet = true
       this.clearTimer()
-      pulse.timer = setInterval(() => {
+      /*pulse.timer = setInterval(() => {
         if (performance.now() - pulse.last < 2000) { return }
         this.untap()
-      }, 2000)
+	  }, 2000)*/
     }
     if (pulse.count == 0) {
       if (this.isPaused) { pulse.frame++ } else {
@@ -121,7 +121,7 @@ function Clock (client) {
 
   this.untap = function () {
     console.log('Clock', 'Puppeteering stops..')
-    clearInterval(pulse.timer)
+    //clearInterval(pulse.timer)
     this.isPuppet = false
     pulse.frame = 0
     pulse.last = null

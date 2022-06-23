@@ -49,6 +49,8 @@ function Commander (client) {
     frame: (p) => { client.clock.setFrame(p.int) },
     rewind: (p) => { client.clock.setFrame(client.orca.f - p.int) },
     skip: (p) => { client.clock.setFrame(client.orca.f + p.int) },
+		tap: (p) => { client.clock.tap() },
+		untap: (p) => { client.clock.untap() },
     time: (p, origin) => {
       const formatted = new Date(250 * (client.orca.f * (60 / client.clock.speed.value))).toISOString().substr(14, 5).replace(/:/g, '')
       client.orca.writeBlock(origin ? origin.x : client.cursor.x, origin ? origin.y : client.cursor.y, `${formatted}`)
@@ -68,9 +70,27 @@ function Commander (client) {
       client.orca.writeBlock(origin ? origin.x : client.cursor.x, origin ? origin.y : client.cursor.y, block)
       client.cursor.scaleTo(0, 0)
     },
-    write: (p) => {
-      client.orca.writeBlock(p._x || client.cursor.x, p._y || client.cursor.y, p._str)
-    }
+		value: (p) => {  
+			console.log(client.orca.variables)
+			console.log(p.parts)
+			if(p.parts[0] && client.orca.keys.includes(p.parts[0])
+				&& p.parts[1] && client.orca.keys.includes(p.parts[1])) {
+				client.orca.variables[p.parts[0]] = p.parts[1]
+			}
+		},
+		write: (p) => {
+			const t = p._str
+			const x = isNaN(p._x) ? client.cursor.x : p._x
+			const y = isNaN(p._y) ? client.cursor.y : p._y
+			const m = p.parts[3]
+			if(!m || !client.orca.markers[m]) { 
+				client.orca.writeBlock(x, y, t)
+			} else {
+				for(let origin of client.orca.markers[m]) {
+					client.orca.writeBlock(x+origin.x, y+origin.y, t)
+				}
+			}
+		}
   }
 
   // Make shorthands
@@ -79,10 +99,11 @@ function Commander (client) {
   }
 
   function Param (val) {
+		const y = parseInt(val);
     this.str = `${val}`
     this.length = this.str.length
     this.chars = this.str.split('')
-    this.int = !isNaN(val) ? parseInt(val) : null
+		this.int = isNaN(y) ? null : y;
     this.parts = val.split(';')
     this.ints = this.parts.map((val) => { return parseInt(val) })
     this.x = parseInt(this.parts[0])

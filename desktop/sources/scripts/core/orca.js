@@ -11,6 +11,7 @@ function Orca (library) {
   this.locks = []
   this.runtime = []
   this.variables = {}
+  this.markers = {}
 
   this.run = function () {
     this.runtime = this.parse()
@@ -58,16 +59,17 @@ function Orca (library) {
   // Operators
 
   this.parse = function () {
-    const a = []
-    for (let y = 0; y < this.h; y++) {
-      for (let x = 0; x < this.w; x++) {
-        const g = this.glyphAt(x, y)
-        if (g === '.' || !this.isAllowed(g)) { continue }
-        a.push(new library[g.toLowerCase()](this, x, y, g === g.toUpperCase()))
-      }
-    }
-    return a
-  }
+		const a = []
+		this.markers = []
+		for (let y = 0; y < this.h; y++) {
+			for (let x = 0; x < this.w; x++) {
+				const g = this.glyphAt(x, y)
+				if (g === '.' || !this.isAllowed(g)) { continue }
+				a.push(new library[g.toLowerCase()](this, x, y, g === g.toUpperCase()))
+			}
+		}
+		return a
+	}
 
   this.operate = function (operators) {
     this.release()
